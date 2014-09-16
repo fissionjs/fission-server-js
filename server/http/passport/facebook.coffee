@@ -1,70 +1,70 @@
 db = require '../../db'
 User = db.model 'User'
 passport = require 'passport'
-ppfb = require 'passport-facebook'
-FacebookStrategy = ppfb.Strategy
+{Strategy} = require 'passport-facebook'
 config = require '../../config'
 app = require '../express'
 express = require 'express'
+request = require 'request'
 
-# cherry pick fields of facebook json to make a user profile
-profileToUser = (profile, accessToken) ->
-  profile.fbid = profile.id
-  profile.provider = 'facebook'
-  profile.location = profile.location?.name
-  profile.token = accessToken
 
-  # dont let fb overwrite our sacred vars
-  delete profile.id
-  delete profile._id
-  return profile
+handleFunction = (token, tokenSecret, profile, cb) ->
+  console.log token, tokenSecret, profile
+  User.findOne {id: profile.id}, (err, user) ->
+    return cb err if err?
+    request {url: "https://graph.facebook.com/#{profile.id}?fields=cover", timeout: 600}, (err, res, body) ->      try
+      banner = '' if err?
+      try
+        json = JSON.parse body
+        banner = json.cover.source
+      catch e
+        banner = ''
 
-# main login handler
-handleLogin = (accessToken, refreshToken, profile, done) ->
-  theoreticalUser = profileToUser profile._json, accessToken
+      profileUpdate =
+        id: String profile._json.id
+        token: token
+        tokenSecret: tokenSecret
+        name: profile._json.name
+        username: profile._json.username
+        description: profile._json.bio
+        location: profile._json.locale
+        banner: banner
+        image: "http://graph.facebook.com/#{profile._json.username}/picture?type=large"
+        website: profile._json.url
+        verified: profile._json.verified
+      if user?
+        console.log "user exists"
+        user.set profileUpdate
+        user.save cb
+      else
+        console.log "user doesn't exist"
+        User.create profileUpdate, (err, doc) ->
+          return cb err if err?
+          cb null, doc
 
-  q = User.findOne fbid: theoreticalUser.fbid
-  q.exec (err, user) ->
-    return done err if err?
-    if user?
-      handleExistingLogin user, done
-    else
-      handleFirstLogin theoreticalUser, done
-
-# login handler for users who have logged in before
-handleExistingLogin = (user, cb) ->
-  user.set 'firstLogin', false
-  user.save cb
-
-# login handler for users who have never logged in
-handleFirstLogin = (theoreticalUser, cb) ->
-  User.create theoreticalUser, cb
-
-# serializing used for signed cookies
-userToString = (user, cb) ->
-  cb null, String user._id
-
-stringToUser = (_id, cb) ->
-  User.findById _id, cb
-
-# internals to facebook login
-strategyConfig =
-  clientID: config.facebook.id
-  clientSecret: config.facebook.secret
+strategy = new Strategy
+  clientID: config.facebook.clientID
+  clientSecret: config.facebook.clientSecret
   callbackURL: config.facebook.callback
-
-strategy = new FacebookStrategy strategyConfig, handleLogin
+, handleFunction
 
 passport.use strategy
-passport.serializeUser userToString
-passport.deserializeUser stringToUser
+passport.serializeUser (user, cb) ->
+  cb null, user.id
 
-app.get '/auth/facebook', passport.authenticate 'facebook',
-  display: 'touch'
+passport.deserializeUser (id, cb) ->
+  User.findOne {id:String(id)}, cb
 
+app.use passport.initialize()
+app.use passport.session()
+
+app.get '/auth/facebook', passport.authenticate 'facebook'
 app.get '/auth/facebook/callback', passport.authenticate 'facebook',
-  display: 'touch'
   successRedirect: '/'
-  failureRedirect: '/login'
+  failureRedirect: '/login?failed=true'
+
+app.get '/logout', (req, res) ->
+  req.logout()
+  res.redirect '/'
 
 module.exports = passport

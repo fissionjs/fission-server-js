@@ -34,7 +34,6 @@ User = new Schema
 
   tokenSecret:
     type: String
-    required: true
     select: true
     authorize: hidden
 
@@ -43,6 +42,8 @@ User = new Schema
     authorize: noWrite
     default: "https://si0.twimg.com/sticky/default_profile_images/default_profile_0_normal.png"
 
+  banner:
+    type: String
   username:
     type: String
     required: true

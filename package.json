@@ -1,11 +1,9 @@
 {
-  "name": "spark",
-  "description": "DESCRIPTIONHERE",
+  "name": "fission-server",
+  "description": "Server for Fission",
   "version": "0.0.1",
-  "mod-project-name": "hashplayer",
-  "private": true,
-  "homepage": "http://github.com/wearefractal/spark",
-  "repository": "git://github.com/wearefractal/sparkE.git",
+  "homepage": "http://github.com/fissionjs/fission-server",
+  "repository": "git://github.com/fissionjs/fission-server.git",
   "author": "Fractal <contact@wearefractal.com> (http://wearefractal.com/)",
   "main": "./server/start.js",
   "dependencies": {
@@ -35,6 +33,12 @@
     "twit": "^1.1.15",
     "winston": "^0.7.2"
   },
+  "devDependencies": {
+    "mocha": "^1.21.4",
+    "seedling": "0.0.7",
+    "should": "^4.0.4",
+    "supertest": "^0.13.0"
+  },
   "scripts": {
     "test": "NODE_ENV=testing mocha --recursive --reporter spec --compilers coffee:coffee-script/register ./server/test",
     "build": "gulp",
@@ -46,13 +50,7 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://github.com/wearefractal/APPNAME/raw/master/LICENSE"
+      "url": "http://github.com/fissionjs/fission-server/raw/master/LICENSE"
     }
-  ],
-  "devDependencies": {
-    "mocha": "^1.21.4",
-    "seedling": "0.0.7",
-    "should": "^4.0.4",
-    "supertest": "^0.13.0"
-  }
+  ]
 }

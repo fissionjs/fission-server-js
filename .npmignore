@@ -16,3 +16,5 @@ results
 npm-debug.log
 node_modules
 *.sublime*
+server/config/development.json
+server/config/production.json

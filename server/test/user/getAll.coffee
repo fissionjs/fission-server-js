@@ -16,16 +16,17 @@ describe 'User GET plural', ->
   beforeEach (cb) ->
     User.create mock, cb
 
-  it 'should respond with 403 when not logged in', (done) ->
+  it 'should respond with 200 when not logged in', (done) ->
     request(app)
       .get("#{config.apiPrefix}/users")
       .set('Accept', 'application/json')
-      .expect(403, done)
+      .expect(200, done)
 
   it 'should respond with 200 and information when logged in', (done) ->
     request(app)
       .get("#{config.apiPrefix}/users")
       .set('Accept', 'application/json')
+      .query(setup.user.createQuery(mock._id))
       .expect('Content-Type', /json/)
       .expect(200)
       .end (err, res) ->
@@ -39,13 +40,12 @@ describe 'User GET plural', ->
 
   it 'should respond with 200 and information when logged in', (done) ->
     request(app)
-      .get("#{config.apiPrefix}/users/")
+      .get("#{config.apiPrefix}/users")
       .set('Accept', 'application/json')
-      .query(setup.user.createQuery(mock._id))
+      .expect('Content-Type', /json/)
       .expect(200)
       .end (err, res) ->
         return done err if err?
         should.exist res.body
         res.body.should.be.type 'object'
-        res.body._id.should.equal mock._id
         done()

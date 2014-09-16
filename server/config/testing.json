@@ -1,4 +1,9 @@
 {
   "database": "mongodb://localhost:27017/fission-server-test",
-  "debug": false
+  "debug": false,
+  "twitter":{
+    "consumerKey": "fake",
+    "secretKey": "secret",
+    "callback":"/auth/twitter/callback"
+  }
 }

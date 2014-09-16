@@ -21,6 +21,7 @@ hookedInit = (req, res, next) ->
     return next err if err?
     req._passport.session =
       user: user
+    req.user = user
     next()
 
 passport.initialize = -> hookedInit

@@ -2,7 +2,7 @@ isObjectId = require '../../lib/isObjectId'
 db = require '../../db'
 User = db.model 'User'
 
-canModify = ['heightFt', 'heightIn']  ## Whitelist, what the user can modify
+canModify = ['name', 'description']  ## Whitelist, what the user can modify
 
 module.exports = (req, res, next) ->
   return res.status(403).end() unless req.isAuthenticated()
@@ -22,4 +22,4 @@ module.exports = (req, res, next) ->
 
     user.save (err, nuser) ->
       return next err if err?
-      res.send nuser.toJSON()
+      res.status(200).json nuser.toJSON()

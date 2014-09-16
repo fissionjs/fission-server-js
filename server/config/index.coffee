@@ -12,7 +12,6 @@ hardcoded =
   port: process.env.PORT
   database: process.env.MONGO_URL
 
-# stupid fucking hack because config-chain sucks dick
 delete hardcoded[k] for k,v of hardcoded when !v?
 
 conf = cc argv, cc.env('app_'), hardcoded, configWithEnv, configDefault

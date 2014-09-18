@@ -1,5 +1,4 @@
-var app, config, fn, handlers, method, path, pluralize, pluralized, registerRoute, requireDir, resDir, resource, resources, winston,
-  __slice = [].slice;
+var __slice = [].slice;
 
 var config = require('../../config');
 var app = require('../express');
@@ -10,7 +9,7 @@ var path = require('path');
 var resDir = path.join(__dirname, '../../resources');
 var resources = requireDir(resDir, {recurse: true});
 
-registerRoute = function() {
+var registerRoute = function() {
   var method = arguments[0];
   var route = arguments[1];
   var fns = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
@@ -19,14 +18,14 @@ registerRoute = function() {
   return app;
 };
 
-for (resource in resources) {
-  handlers = resources[resource];
-  for (method in handlers) {
-    fn = handlers[method];
+for (var resource in resources) {
+  var handlers = resources[resource];
+  for (var method in handlers) {
+    var fn = handlers[method];
     if (!(typeof fn === 'function')) {
       continue;
     }
-    pluralized = pluralize.plural(resource);
+    var pluralized = pluralize.plural(resource);
     if (method === 'getAll') {
       registerRoute('get', '' + config.apiPrefix + '/' + pluralized, fn);
     } else if (method === 'post') {

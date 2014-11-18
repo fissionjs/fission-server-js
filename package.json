@@ -1,7 +1,7 @@
 {
   "name": "fission-server-js",
   "description": "Server for Fission",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "homepage": "http://github.com/fissionjs/fission-server-js",
   "repository": "git://github.com/fissionjs/fission-server-js.git",
   "author": "Fractal <contact@wearefractal.com> (http://wearefractal.com/)",
